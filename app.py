@@ -8,6 +8,7 @@ import math
 import os
 from dotenv import load_dotenv
 
+# Carrega as variáveis de ambiente protegidas
 load_dotenv()
 
 app = Flask(__name__)
@@ -260,7 +261,7 @@ def login():
             else: erro = "E-mail ou Senha incorretos!"
     return render_template('login.html', erro=erro, sucesso=sucesso)
 
-# --- ROTAS DE VÍNCULO ---
+# --- ROTAS DE VÍNCULO E ACESSO DO PERSONAL ---
 
 @app.route('/compartilhado/desvincular/<string:email_aluno>')
 def desvincular_aluno(email_aluno):
@@ -270,6 +271,18 @@ def desvincular_aluno(email_aluno):
     db.cursor().execute("UPDATE treinos_gerados SET status = 'arquivado' WHERE usuario_email = ?", (email_aluno,))
     db.commit()
     if session['usuario_tipo'] == 'admin': return redirect(url_for('painel_admin'))
+    return redirect(url_for('painel_personal'))
+
+@app.route('/personal/alterar_senha_aluno', methods=['POST'])
+def personal_alterar_senha_aluno():
+    if 'usuario_logado' not in session or session['usuario_tipo'] != 'personal': 
+        return redirect(url_for('login'))
+    db = get_db()
+    email_aluno = request.form.get('email_aluno')
+    nova_senha = request.form.get('nova_senha').strip()
+    if email_aluno and nova_senha:
+        db.cursor().execute("UPDATE usuarios SET senha = ? WHERE email = ?", (nova_senha, email_aluno))
+        db.commit()
     return redirect(url_for('painel_personal'))
 
 @app.route('/personal/criar_treino_manual/<string:email_aluno>', methods=['POST'])
@@ -291,7 +304,7 @@ def criar_treino_manual(email_aluno):
         
         cursor = db.cursor()
         cursor.execute("""
-            INSERT INTO treinos_gerados (usuario_email, treino_texto, data_criacao, data_validade, status, nivel, foco, objective)
+            INSERT INTO treinos_gerados (usuario_email, treino_texto, data_criacao, data_validade, status, nivel, foco, objetivo)
             VALUES (?, ?, ?, ?, 'pendente', ?, ?, ?)
         """, (email_aluno, treino_gerado, datetime.now().strftime("%d/%m/%Y"), (datetime.now() + timedelta(days=60)).strftime("%d/%m/%Y"), nivel, foco, objetivo))
         
@@ -309,7 +322,7 @@ def painel_admin():
     personais = db.cursor().execute('SELECT * FROM usuarios WHERE tipo = "personal" ORDER BY nome ASC').fetchall()
     estrutura_SaaS = {p: db.cursor().execute('SELECT * FROM usuarios WHERE tipo = "aluno" AND personal_vinculado = ? ORDER BY nome ASC', (p['email'],)).fetchall() for p in personais}
     alunos_orfaos = db.cursor().execute('SELECT * FROM usuarios WHERE tipo = "aluno" AND (personal_vinculado IS NULL OR personal_vinculado = "") ORDER BY nome ASC').fetchall()
-    return render_template('painel_admin.html', estrutura=estrutura_SaaS, orfaos=alunos_orfaos, personais=personais)
+    return render_template('painel_admin.html', estrutura=estrutura=estrutura_SaaS, orfaos=alunos_orfaos, personais=personais)
 
 @app.route('/personal')
 def painel_personal():
@@ -420,7 +433,7 @@ def progresso_aluno(email_aluno):
     historico_dados = db.cursor().execute("SELECT * FROM historico_progresso WHERE usuario_email = ? ORDER BY id DESC", (email_aluno,)).fetchall()
     return render_template('progresso.html', historico=historico_dados, aluno=aluno_info, modo_visualizacao=True)
 
-# --- OUTRAS ROTAS ---
+# --- ROTAS DE AGENDA E CHECK-IN ---
 
 @app.route('/personal/agenda', methods=['GET', 'POST'])
 def personal_agenda():
@@ -464,6 +477,8 @@ def aluno_agenda():
         db.cursor().execute("INSERT INTO checkins_aulas (agenda_id, aluno_email) VALUES (?, ?)", (request.form.get('id_agenda'), email_aluno))
         db.commit()
     return render_template('aluno_agenda.html', disponiveis=db.cursor().execute("SELECT a.*, (a.vagas_totais - COUNT(c.id)) as vagas_restantes FROM agenda_disponivel a LEFT JOIN checkins_aulas c ON a.id = c.agenda_id WHERE a.personal_email = ? AND a.data >= date('now') GROUP BY a.id HAVING vagas_restantes > 0 ORDER BY a.data ASC, a.horario ASC", (aluno['personal_vinculado'],)).fetchall(), meus_agendamentos=[{'checkin_id': ag['checkin_id'], 'data': datetime.strptime(ag['data'], "%Y-%m-%d").strftime("%d/%m/%Y"), 'horario': ag['horario'], 'prof_nome': ag['prof_nome'], 'status': ag['status'], 'pode_desmarcar': True} for ag in db.cursor().execute("SELECT c.id as checkin_id, c.status, a.data, a.horario, u.nome as prof_nome FROM checkins_aulas c JOIN agenda_disponivel a ON c.agenda_id = a.id JOIN usuarios u ON a.personal_email = u.email WHERE c.aluno_email = ? ORDER BY a.data ASC, a.horario ASC", (email_aluno,)).fetchall()])
+
+# --- REVISÃO E CRIAÇÃO DE TREINOS ---
 
 @app.route('/personal/revisar/<int:id_treino>', methods=['GET', 'POST'])
 def personal_revisar_treino(id_treino):
@@ -526,6 +541,8 @@ def index():
     sem_professor = True if not aluno_status['personal_vinculado'] else False
     return render_template('index.html', aluno_sem_professor=sem_professor, erro_vinculo=erro_vinculo)
 
+# --- ROTAS DE INTERAÇÃO DO ALUNO ---
+
 @app.route('/meus_treinos')
 def meus_treinos():
     if 'usuario_logado' not in session: return redirect(url_for('login'))
@@ -537,7 +554,7 @@ def iniciar_treino():
     if 'usuario_logado' not in session: return redirect(url_for('login'))
     db = get_db()
     if request.method == 'POST':
-        db.cursor().execute('INSERT INTO historico_treino (usuario_email, tipo_treino, cargas_anotadas, data_execucao) VALUES (?, ?, ?, ?)', (session['session_logado'], request.form.get('tipo_treino'), request.form.get('cargas'), datetime.now().strftime("%d/%m/%Y")))
+        db.cursor().execute('INSERT INTO historico_treino (usuario_email, tipo_treino, cargas_anotadas, data_execucao) VALUES (?, ?, ?, ?)', (session['usuario_logado'], request.form.get('tipo_treino'), request.form.get('cargas'), datetime.now().strftime("%d/%m/%Y")))
         db.commit()
         return redirect(url_for('historico'))
     treino_salvo = db.cursor().execute("SELECT * FROM treinos_gerados WHERE usuario_email = ? AND status = 'ativo' ORDER BY id DESC", (session['usuario_logado'],)).fetchone()

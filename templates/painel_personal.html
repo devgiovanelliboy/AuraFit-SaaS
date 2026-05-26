@@ -1,60 +1,133 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Professor - AuraFit</title>
+    <title>AuraFit - Painel do Personal</title>
     <style>
-        /* DESIGN PREMIUM DARK MODE MESTRE */
-        body { font-family: 'Segoe UI', sans-serif; background: #121214; color: #fff; max-width: 1200px; margin: 40px auto; padding: 20px; box-sizing: border-box; }
-        .navbar-links { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #202024; padding: 15px 20px; border-radius: 8px; border: 1px solid #29292e; }
-        .brand-logo { color: #04d361; font-weight: bold; font-size: 22px; text-decoration: none; letter-spacing: 1px; }
-        
-        .card { background: #202024; padding: 30px; border-radius: 8px; border: 1px solid #29292e; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 25px; }
-        h3 { color: #04d361; margin-top: 0; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #29292e; vertical-align: middle; }
-        th { background: #121214; color: #04d361; font-weight: bold; }
-        tr:hover { background: #252529; }
-
-        .btn { display: inline-block; padding: 8px 14px; border-radius: 4px; font-weight: bold; font-size: 13px; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s; text-align: center; }
-        .btn-green { background: #04d361; color: #000; }
-        .btn-green:hover { background: #029e47; }
-        .btn-blue { background: #0072f5; color: #fff; }
-        .btn-blue:hover { background: #0052b3; }
-        .btn-dark { background: #29292e; color: #a8a8b3; border: 1px solid #3e3e44; }
-        .btn-dark:hover { color: #fff; border-color: #04d361; }
-        .btn-red { background: transparent; color: #f75a68; }
-        .btn-red:hover { text-decoration: underline; }
-
-        .condicao-clinica { background: rgba(247, 90, 104, 0.1); border-left: 3px solid #f75a68; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #f75a68; font-weight: bold; max-width: 220px; }
-        .condicao-limpa { background: rgba(4, 211, 97, 0.1); border-left: 3px solid #04d361; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #04d361; font-weight: bold; max-width: 220px; }
-        
-        .form-nivel { display: flex; flex-direction: column; gap: 6px; background: #121214; padding: 10px; border-radius: 6px; border: 1px solid #29292e; max-width: 180px; }
-        .form-nivel select { background: #202024; color: #fff; border: 1px solid #29292e; padding: 5px; border-radius: 4px; font-size: 12px; }
-
-        /* MODAL FLUTUANTE DE VISUALIZAÇÃO */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: #202024; padding: 30px; border-radius: 12px; border: 1px solid #29292e; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #29292e; padding-bottom: 10px; }
-        .close-modal { color: #a8a8b3; font-size: 28px; cursor: pointer; font-weight: bold; }
-        .close-modal:hover { color: #f75a68; }
-        .treino-preview-text { background: #121214; padding: 20px; border-radius: 6px; border: 1px solid #29292e; white-space: pre-wrap; line-height: 1.6; font-size: 14px; color: #e1e1e6; }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1e1e1e;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #00e676;
+        }
+        h1, h2 {
+            margin: 0;
+            color: #ffffff;
+        }
+        h1 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        h2 { font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .btn-primary { background-color: #2979ff; color: white; }
+        .btn-primary:hover { background-color: #2962ff; }
+        .btn-danger { background-color: #ff1744; color: white; text-align: center; }
+        .btn-danger:hover { background-color: #d50000; }
+        .btn-success { background-color: #00e676; color: #121212; }
+        .btn-success:hover { background-color: #00c853; }
+        .btn-secondary { background-color: #333; color: #fff; border: 1px solid #444; }
+        .btn-secondary:hover { background-color: #444; }
+        .card {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #2d2d2d;
+        }
+        th {
+            background-color: #151515;
+            color: #00e676;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        tr:hover { background-color: #252525; }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-warning { background-color: #ffea00; color: #121212; }
+        .badge-danger { background-color: #ff1744; color: white; }
+        .badge-success { background-color: #00e676; color: #121212; }
+        .input-reset {
+            padding: 5px;
+            width: 100px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            font-size: 12px;
+        }
+        .btn-reset {
+            padding: 5px 10px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-reset:hover { background-color: #e65100; }
+        select {
+            padding: 6px;
+            background-color: #2d2d2d;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="navbar-links">
-        <a href="/personal" class="brand-logo">🚀 AURAFIT PROFESSOR</a>
-        <div style="display: flex; gap: 10px;">
-            <a href="/personal/agenda" class="btn btn-blue">📅 Gerenciar Minha Agenda</a>
-            <a href="/logout" class="btn btn-red">Sair</a>
+<div class="container">
+
+    <div class="header">
+        <h1>🚀 AURAFIT PROFESSOR</h1>
+        <div>
+            <a href="{{ url_for('personal_agenda') }}" class="btn btn-primary">🗓️ Gerenciar Minha Agenda</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger" style="margin-left: 10px;">Sair</a>
         </div>
     </div>
 
     <div class="card">
-        <h3>🔔 Novas Fichas Aguardando Análise Técnica</h3>
+        <h2>🔔 Novas Fichas Aguardando Análise Técnica</h2>
+        {% if pendentes %}
         <table>
             <thead>
                 <tr>
@@ -65,27 +138,28 @@
                 </tr>
             </thead>
             <tbody>
-                {% for p in pendentes %}
+                {% for t in pendentes %}
                 <tr>
-                    <td><strong>{{ p.nome }} {{ p.sobrenome }}</strong><br><span style="color:#7c7c8a; font-size:12px;">{{ p.usuario_email }}</span></td>
-                    <td>{{ p.objetivo }}</td>
-                    <td><span style="color: #04d361; font-weight: bold;">{{ p.foco }}</span></td>
                     <td>
-                        <a href="/personal/revisar/{{ p.id }}" class="btn btn-green">🔍 Ajustar & Ativar Ficha</a>
+                        <strong>{{ t.nome }} {{ t.sobrenome }}</strong><br>
+                        <span style="font-size: 12px; color: #888;">{{ t.usuario_email }}</span>
+                    </td>
+                    <td>{{ t.objetivo }}</td>
+                    <td><span style="color: #00e676;">{{ t.foco }}</span></td>
+                    <td>
+                        <a href="{{ url_for('personal_revisar_treino', id_treino=t.id) }}" class="btn btn-success" style="font-size: 12px; padding: 6px 12px;">🔍 Ajustar & Ativar Ficha</a>
                     </td>
                 </tr>
                 {% endfor %}
-                {% if not pendentes %}
-                <tr>
-                    <td colspan="4" style="color: #a8a8b3; font-style: italic; text-align: center; padding: 20px;">Nenhuma solicitação de ficha pendente.</td>
-                </tr>
-                {% endif %}
             </tbody>
         </table>
+        {% else: %}
+        <p style="color: #888; margin: 10px 0 0 0;">Nenhuma ficha pendente de revisão no momento.</p>
+        {% endif %}
     </div>
 
     <div class="card">
-        <h3>👥 Meus Alunos Ativos</h3>
+        <h2>👥 Meus Alunos Ativos</h2>
         <table>
             <thead>
                 <tr>
@@ -103,94 +177,295 @@
                 <tr>
                     <td>
                         <strong>{{ aluno.nome }} {{ aluno.sobrenome }}</strong><br>
-                        <span style="color:#a8a8b3; font-size:12px;">Vence em: <strong>{{ aluno.data_validade or 'Sem ficha ativa' }}</strong></span>
+                        <span style="font-size: 11px; color: #aaa;">Vence em: {{ aluno.data_validade if aluno.data_validade else 'Sem ficha ativa' }}</span>
                     </td>
                     <td>
-                        {% if aluno.limitacoes and aluno.limitacoes.strip() != "" and aluno.limitacoes.strip() != "Nenhuma" %}
-                            <div class="condicao-clinica">⚠️ Restrição: {{ aluno.limitacoes }}</div>
+                        {% if aluno.limitacoes and aluno.limitacoes != 'Nenhuma' %}
+                        <span class="badge badge-danger">⚠️ Restrição: {{ aluno.limitacoes }}</span>
                         {% else %}
-                            <div class="condicao-limpa">✅ Sem restrições médicas</div>
+                        <span class="badge badge-success">✅ Sem restrições médicas</span>
                         {% endif %}
                     </td>
                     <td>
-                        <button type="button" class="btn btn-dark" onclick="abrirModalFicha('{{ aluno.email }}', '{{ aluno.nome }}')">📄 Ver Ficha Atual</button>
+                        {% if aluno.data_validade %}
+                        <a href="{{ url_for('ver_treino_compartilhado', email_aluno=aluno.email) }}" class="btn btn-secondary" style="font-size: 12px; padding: 5px 10px;">📄 Ver Ficha Atual</a>
+                        {% else %}
+                        <span style="color: #666; font-size: 12px;">Nenhuma</span>
+                        {% endif %}
                     </td>
                     <td>
-                        <a href="/progresso/{{ aluno.email }}" class="btn btn-dark">⚖️ Avaliação Física</a>
+                        <a href="{{ url_for('progresso_aluno', email_aluno=aluno.email) }}" class="btn btn-secondary" style="font-size: 12px; padding: 5px 10px;">⚖️ Avaliação Física</a>
                     </td>
                     <td>
-                        <a href="/compartilhado/ver_treino/{{ aluno.email }}" class="btn btn-green">📊 Evolução de Carga</a>
+                        {% if aluno.data_validade %}
+                        <a href="{{ url_for('ver_treino_compartilhado', email_aluno=aluno.email) }}?treino_filtro=TREINO+A" class="btn btn-success" style="font-size: 12px; padding: 5px 10px; font-weight: normal;">📊 Evolução de Carga</a>
+                        {% else %}
+                        <span style="color: #666; font-size: 12px;">Indisponível</span>
+                        {% endif %}
                     </td>
                     <td>
-                        <form action="/personal/criar_treino_manual/{{ aluno.email }}" method="POST" class="form-nivel">
-                            <input type="hidden" name="objetivo" value="{{ aluno.objetivo or 'Hipertrofia / Ganho de Massa' }}">
-                            <input type="hidden" name="foco" value="{{ aluno.foco or 'Equilibrado (Sem foco específico)' }}">
-                            
+                        <form action="{{ url_for('criar_treino_manual', email_aluno=aluno.email) }}" method="POST">
+                            <input type="hidden" name="objetivo" value="{{ aluno.objetivo if aluno.objetivo else 'Hipertrofia / Ganho de Massa' }}">
+                            <input type="hidden" name="foco" value="{{ aluno.foco if aluno.foco else 'Membros Superiores (Peito, Costas, Braços)' }}">
                             <select name="nivel">
-                                <option value="Iniciante">Iniciante</option>
-                                <option value="Intermediário" selected>Intermediário</option>
-                                <option value="Avançado">Avançado</option>
-                                <option value="Experiente">Experiente</option>
+                                <option value="Iniciante" {% if aluno.nivel == 'Iniciante' %}selected{% endif %}>Iniciante</option>
+                                <option value="Intermediário" {% if aluno.nivel == 'Intermediário' or not aluno.nivel %}selected{% endif %}>Intermediário</option>
+                                <option value="Avançado" {% if aluno.nivel == 'Avançado' %}selected{% endif %}>Avançado</option>
                             </select>
-                            <button type="submit" class="btn btn-blue" style="padding: 4px; font-size: 11px;">⚡ Atualizar Treino</button>
+                            <button type="submit" class="btn btn-primary" style="font-size: 11px; padding: 4px 8px; margin-top: 4px; display: block;">⚡ Atualizar Treino</button>
                         </form>
                     </td>
                     <td>
-                        <a href="/compartilhado/desvincular/{{ aluno.email }}" class="btn btn-red" onclick="return confirm('Deseja desvincular?')">Desvincular</a>
+                        <a href="{{ url_for('desvincular_aluno', email_aluno=aluno.email) }}" style="color: #ff1744; font-size: 13px; font-weight: bold; text-decoration: none; display: block; margin-bottom: 8px;">Desvincular</a>
+                        
+                        <form action="{{ url_for('personal_alterar_senha_aluno') }}" method="POST" style="display: block; margin-top: 5px;">
+                            <input type="hidden" name="email_aluno" value="{{ aluno.email }}">
+                            <input type="text" name="nova_senha" placeholder="Nova Senha" required class="input-reset">
+                            <button type="submit" class="btn-reset">Resetar</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
-                {% if not alunos %}
-                <tr>
-                    <td colspan="7" style="color: #a8a8b3; font-style: italic; text-align: center; padding: 20px;">Nenhum aluno ativo.</td>
-                </tr>
-                {% endif %}
             </tbody>
         </table>
     </div>
 
-    <div id="modalFicha" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTituloFicha" style="margin:0; color:#04d361;">Planilha de Exercícios Atual</h3>
-                <span class="close-modal" onclick="fecharModalFicha()">&times;</span>
-            </div>
-            <div class="treino-preview-text" id="modalTextoFicha">Carregando dados...</div>
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>AuraFit - Painel do Personal</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1e1e1e;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #00e676;
+        }
+        h1, h2 {
+            margin: 0;
+            color: #ffffff;
+        }
+        h1 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        h2 { font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .btn-primary { background-color: #2979ff; color: white; }
+        .btn-primary:hover { background-color: #2962ff; }
+        .btn-danger { background-color: #ff1744; color: white; text-align: center; }
+        .btn-danger:hover { background-color: #d50000; }
+        .btn-success { background-color: #00e676; color: #121212; }
+        .btn-success:hover { background-color: #00c853; }
+        .btn-secondary { background-color: #333; color: #fff; border: 1px solid #444; }
+        .btn-secondary:hover { background-color: #444; }
+        .card {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #2d2d2d;
+        }
+        th {
+            background-color: #151515;
+            color: #00e676;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        tr:hover { background-color: #252525; }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-warning { background-color: #ffea00; color: #121212; }
+        .badge-danger { background-color: #ff1744; color: white; }
+        .badge-success { background-color: #00e676; color: #121212; }
+        .input-reset {
+            padding: 5px;
+            width: 100px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            font-size: 12px;
+        }
+        .btn-reset {
+            padding: 5px 10px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-reset:hover { background-color: #e65100; }
+        select {
+            padding: 6px;
+            background-color: #2d2d2d;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🚀 AURAFIT PROFESSOR</h1>
+        <div>
+            <a href="{{ url_for('personal_agenda') }}" class="btn btn-primary">🗓️ Gerenciar Minha Agenda</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger" style="margin-left: 10px;">Sair</a>
         </div>
     </div>
 
-    <script>
-        function abrirModalFicha(email, nome) {
-            document.getElementById('modalTituloFicha').innerText = `📄 Ficha Ativa: ${nome}`;
-            document.getElementById('modalTextoFicha').innerText = "Buscando planejamento no banco de dados...";
-            document.getElementById('modalFicha').style.display = 'flex';
+    <div class="card">
+        <h2>🔔 Novas Fichas Aguardando Análise Técnica</h2>
+        {% if pendentes %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>Objetivo</th>
+                    <th>Foco Prioritário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in pendentes %}
+                <tr>
+                    <td>
+                        <strong>{{ t.nome }} {{ t.sobrenome }}</strong><br>
+                        <span style="font-size: 12px; color: #888;">{{ t.usuario_email }}</span>
+                    </td>
+                    <td>{{ t.objetivo }}</td>
+                    <td><span style="color: #00e676;">{{ t.foco }}</span></td>
+                    <td>
+                        <a href="{{ url_for('personal_revisar_treino', id_treino=t.id) }}" class="btn btn-success" style="font-size: 12px; padding: 6px 12px;">🔍 Ajustar & Ativar Ficha</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else: %}
+        <p style="color: #888; margin: 10px 0 0 0;">Nenhuma ficha pendente de revisão no momento.</p>
+        {% endif %}
+    </div>
 
-            // Requisição silenciosa para pegar o texto puro da ficha ativa do aluno
-            fetch(`/personal/api/ver_ficha/${email}`)
-                .then(res => res.json())
-                .then(dados => {
-                    if (dados.treino) {
-                        document.getElementById('modalTextoFicha').innerText = dados.treino;
-                    } else {
-                        document.getElementById('modalTextoFicha').innerText = "Este aluno não possui nenhuma ficha de exercícios ativa no momento.";
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('modalTextoFicha').innerText = "Erro ao conectar com o banco de dados.";
-                });
-        }
+    <div class="card">
+        <h2>👥 Meus Alunos Ativos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ficha Técnica / Aluno</th>
+                    <th>Restrições & Saúde (Salvo)</th>
+                    <th>Ficha Atual</th>
+                    <th>Controle Corporal</th>
+                    <th>Evolução Prática</th>
+                    <th>Renovar / Alterar Nível</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                <tr>
+                    <td>
+                        <strong>{{ aluno.nome }} {{ aluno.sobrenome }}</strong><br>
+                        <span style="font-size: 11px; color: #aaa;">Vence em: {{ aluno.data_validade if aluno.data_validade else 'Sem ficha ativa' }}</span>
+                    </td>
+                    <td>
+                        {% if aluno.limitacoes and aluno.limitacoes != 'Nenhuma' %}
+                        <span class="badge badge-danger">⚠️ Restrição: {{ aluno.limitacoes }}</span>
+                        {% else %}
+                        <span class="badge badge-success">✅ Sem restrições médicas</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if aluno.data_validade %}
+                        <a href="{{ url_for('ver_treino_compartilhado', email_aluno=aluno.email) }}" class="btn btn-secondary" style="font-size: 12px; padding: 5px 10px;">📄 Ver Ficha Atual</a>
+                        {% else %}
+                        <span style="color: #666; font-size: 12px;">Nenhuma</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('progresso_aluno', email_aluno=aluno.email) }}" class="btn btn-secondary" style="font-size: 12px; padding: 5px 10px;">⚖️ Avaliação Física</a>
+                    </td>
+                    <td>
+                        {% if aluno.data_validade %}
+                        <a href="{{ url_for('ver_treino_compartilhado', email_aluno=aluno.email) }}?treino_filtro=TREINO+A" class="btn btn-success" style="font-size: 12px; padding: 5px 10px; font-weight: normal;">📊 Evolução de Carga</a>
+                        {% else %}
+                        <span style="color: #666; font-size: 12px;">Indisponível</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('criar_treino_manual', email_aluno=aluno.email) }}" method="POST">
+                            <input type="hidden" name="objetivo" value="{{ aluno.objetivo if aluno.objetivo else 'Hipertrofia / Ganho de Massa' }}">
+                            <input type="hidden" name="foco" value="{{ aluno.foco if aluno.foco else 'Membros Superiores (Peito, Costas, Braços)' }}">
+                            <select name="nivel">
+                                <option value="Iniciante" {% if aluno.nivel == 'Iniciante' %}selected{% endif %}>Iniciante</option>
+                                <option value="Intermediário" {% if aluno.nivel == 'Intermediário' or not aluno.nivel %}selected{% endif %}>Intermediário</option>
+                                <option value="Avançado" {% if aluno.nivel == 'Avançado' %}selected{% endif %}>Avançado</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" style="font-size: 11px; padding: 4px 8px; margin-top: 4px; display: block;">⚡ Atualizar Treino</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('desvincular_aluno', email_aluno=aluno.email) }}" style="color: #ff1744; font-size: 13px; font-weight: bold; text-decoration: none; display: block; margin-bottom: 8px;">Desvincular</a>
+                        
+                        <form action="{{ url_for('personal_alterar_senha_aluno') }}" method="POST" style="display: block; margin-top: 5px;">
+                            <input type="hidden" name="email_aluno" value="{{ aluno.email }}">
+                            <input type="text" name="nova_senha" placeholder="Nova Senha" required class="input-reset">
+                            <button type="submit" class="btn-reset">Resetar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        function fecharModalFicha() {
-            document.getElementById('modalFicha').style.display = 'none';
-        }
+</div>
 
-        // Fecha o modal caso o usuário clique fora da caixa cinza
-        window.onclick = function(event) {
-            const modal = document.getElementById('modalFicha');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
 </body>
 </html>
