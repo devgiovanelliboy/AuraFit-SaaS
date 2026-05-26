@@ -212,7 +212,7 @@ def chamar_ia_groq(objetivo, foco, nivel, frequencia_dias, limitacoes="Nenhuma")
         f"2. NÃO insira textos informativos, observações, saudações ou comentários iniciais/finais. Vá diretamente para a estrutura da ficha.\n"
         f"3. Separe cada ficha colando os identificadores exatamente assim: {instrucao_marcadores}.\n"
         f"4. Insira o respectivo 'MARCADOR_TREINO_X' colado antes de listar os exercícios daquela letra.\n"
-        f"5. Cada bloco de treino deve listar de 5 a 6 exercícios reais específicos com séries e repetições adequadas ao nível {nivel.upper()}."
+        f"5. Each training block must list from 5 to 6 specific exercises with weight and repetitions adapted to the {nivel.upper()} level."
     )
     
     chave_segura = os.getenv("GROQ_API_KEY")
@@ -322,7 +322,7 @@ def painel_admin():
     personais = db.cursor().execute('SELECT * FROM usuarios WHERE tipo = "personal" ORDER BY nome ASC').fetchall()
     estrutura_SaaS = {p: db.cursor().execute('SELECT * FROM usuarios WHERE tipo = "aluno" AND personal_vinculado = ? ORDER BY nome ASC', (p['email'],)).fetchall() for p in personais}
     alunos_orfaos = db.cursor().execute('SELECT * FROM usuarios WHERE tipo = "aluno" AND (personal_vinculado IS NULL OR personal_vinculado = "") ORDER BY nome ASC').fetchall()
-    return render_template('painel_admin.html', estrutura=estrutura=estrutura_SaaS, orfaos=alunos_orfaos, personais=personais)
+    return render_template('painel_admin.html', estrutura=estrutura_SaaS, orfaos=alunos_orfaos, personais=personais)
 
 @app.route('/personal')
 def painel_personal():
