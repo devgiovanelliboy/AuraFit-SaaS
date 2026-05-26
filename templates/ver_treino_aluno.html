@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizar Ficha de Treino</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #121214; color: #fff; max-width: 600px; margin: 40px auto; padding: 20px; }
+        h1 { color: #04d361; text-align: center; }
+        .box { background: #202024; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        pre { white-space: pre-wrap; background: #121214; padding: 20px; border-radius: 6px; border: 1px solid #29292e; font-size: 15px; line-height: 1.6; color: #fff; font-family: inherit; }
+        .voltar-btn { display: block; text-align: center; margin-top: 20px; color: #04d361; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>📋 Planejamento de Treino Ativo</h1>
+
+    <div class="box">
+        <p style="margin-top: 0; font-size: 16px;"><strong>Aluno:</strong> {{ aluno.email }}</p>
+        
+        {% if treino %}
+            <p style="color: #a8a8b3; font-size: 13px; margin-top: -10px;">Ficha liberada em: {{ treino.data_criacao }}</p>
+            <pre>{{ treino.treino_texto }}</pre>
+        {% else %}
+            <p style="text-align: center; color: #7c7c8a; font-style: italic; padding: 20px;">Este aluno não possui nenhuma ficha de treino ativa ou liberada no momento.</p>
+        {% endif %}
+        
+        <a href="#" onclick="history.back(); return false;" class="voltar-btn">⬅ Voltar para o Painel</a>
+    </div>
+
+</body>
+</html>

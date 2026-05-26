@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolução de Cargas - AuraFit</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121214; color: #fff; max-width: 750px; margin: 40px auto; padding: 20px; box-sizing: border-box; }
+        .card { background: #202024; padding: 30px; border-radius: 8px; border: 1px solid #29292e; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        h2 { color: #04d361; margin-top: 0; }
+        
+        .btn-voltar { display: inline-block; background: #29292e; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin-bottom: 20px; font-weight: bold; font-size: 14px; border: 1px solid transparent; }
+        .btn-voltar:hover { color: #04d361; border-color: #04d361; background: transparent; }
+
+        /* ABAS DO TREINO SELECIONADO */
+        .tabs-container { display: flex; gap: 8px; margin: 20px 0; }
+        .tab-link { background: #29292e; border: 1px solid transparent; color: #a8a8b3; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 13px; }
+        .tab-link.active { background: rgba(4, 211, 97, 0.15); color: #04d361; border-color: #04d361; }
+
+        .chart-container { position: relative; height: 320px; width: 100%; margin-top: 15px; background: #121214; padding: 15px; border-radius: 6px; border: 1px solid #29292e; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <a href="/personal" class="btn-voltar">⬅️ Voltar ao Painel do Professor</a>
+
+    <div class="card">
+        <h2>💪 Histórico de Evolução de Cargas</h2>
+        <p style="color: #a8a8b3; margin-top: -5px;">Visualizando o progresso de força de: <strong>{{ aluno.nome }} {{ aluno.sobrenome }}</strong></p>
+
+        <div class="tabs-container">
+            {% for letra in ['A', 'B', 'C', 'D', 'E'] %}
+                <a href="?treino_filtro=TREINO {{ letra }}" class="tab-link {% if treino_atual == 'TREINO ' ~ letra %}active{% endif %}">TREINO {{ letra }}</a>
+            {% endfor %}
+        </div>
+
+        <div class="chart-container">
+            <canvas id="graficoCargaFicha"></canvas>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const labelsDatas = {% if datas_linha %}{{ datas_linha|safe }}{% else %}[]{% endif %};
+            const valoresPesos = {% if cargas_linha %}{{ cargas_linha|safe }}{% else %}[]{% endif %};
+
+            const ctx = document.getElementById('graficoCargaFicha').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labelsDatas,
+                    datasets: [{
+                        label: 'Carga Máxima Levantada (kg)',
+                        data: valoresPesos,
+                        borderColor: '#04d361',
+                        backgroundColor: 'rgba(4, 211, 97, 0.08)',
+                        borderWidth: 3,
+                        tension: 0.2,
+                        pointBackgroundColor: '#04d361',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: '#29292e' }, ticks: { color: '#a8a8b3' } },
+                        x: { grid: { display: false }, ticks: { color: '#a8a8b3' } }
+                    },
+                    plugins: { legend: { labels: { color: '#fff' } } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Evolução - Personal IA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #121214; color: #e1e1e6; max-width: 650px; margin: 40px auto; padding: 20px; }
+        h1, h2 { color: #04d361; text-align: center; }
+        .box { background: #202024; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .item-historico { background: #121214; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #04d361; }
+        .data-badge { font-size: 13px; color: #a8a8b3; font-weight: bold; }
+        .treino-badge { font-size: 16px; color: #04d361; font-weight: bold; margin-bottom: 5px; }
+        select { width: 100%; padding: 12px; background: #121214; border: 1px solid #29292e; border-radius: 4px; color: #fff; font-size: 16px; font-weight: bold; }
+        pre { white-space: pre-wrap; margin: 5px 0 0 0; color: #fff; font-size: 14px; background: #1a1a1e; padding: 10px; border-radius: 4px; }
+        .links { text-align: center; margin-top: 30px; }
+        .links a { color: #04d361; text-decoration: none; font-weight: bold; margin: 0 10px; }
+        .canvas-container { background: #1a1a1e; padding: 15px; border-radius: 6px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <h1>📊 Evolução de Carga</h1>
+
+    <div class="box">
+        <h2 style="font-size: 18px; margin-bottom: 10px; text-align: left; color: #a8a8b3;">🔍 Selecionar Gráfico do Treino:</h2>
+        <form method="GET" id="formFiltro">
+            <select name="treino_filtro" onchange="document.getElementById('formFiltro').submit()">
+                <option value="TREINO A" {% if treino_atual == 'TREINO A' %}selected{% endif %}>Treino A (Peito / Superiores)</option>
+                <option value="TREINO B" {% if treino_atual == 'TREINO B' %}selected{% endif %}>Treino B (Costas / Membros Superiores)</option>
+                <option value="TREINO C" {% if treino_atual == 'TREINO C' %}selected{% endif %}>Treino C (Pernas / Inferiores)</option>
+                <option value="TREINO D" {% if treino_atual == 'TREINO D' %}selected{% endif %}>Treino D (Ombros / Isolados)</option>
+                <option value="TREINO E" {% if treino_atual == 'TREINO E' %}selected{% endif %}>Treino E</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="box">
+        <h2>💪 Evolução de Carga: {{ treino_atual }}</h2>
+        <div class="canvas-container">
+            <canvas id="graficoLinhaForca"></canvas>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>📋 Histórico de Anotações Completas</h2>
+        {% if historico %}
+            {% for registro in historico %}
+                <div class="item-historico">
+                    <div class="treino-badge">🏋️‍♂️ {{ registro.tipo_treino }}</div>
+                    <div class="data-badge">📅 Data: {{ registro.data_execucao }}</div>
+                    <pre>{{ registro.cargas_anotadas }}</pre>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #7c7c8a; font-style: italic; padding: 20px;">Nenhum registro encontrado.</p>
+        {% endif %}
+    </div>
+
+    <div class="links">
+        <a href="/meus_treinos">💪 Central</a> | 
+        <a href="/iniciar_treino">🏋️‍♂️ Treinar</a>
+    </div>
+
+    <script>
+        var datasX = {{ datas_linha|safe }};
+        var cargasY = {{ cargas_linha|safe }};
+
+        var ctxLinha = document.getElementById('graficoLinhaForca').getContext('2d');
+        new Chart(ctxLinha, {
+            type: 'line',
+            data: {
+                labels: datasX,
+                datasets: [{
+                    label: 'Peso do Exercício Principal (kg)',
+                    data: cargasY,
+                    backgroundColor: 'rgba(4, 211, 97, 0.1)',
+                    borderColor: '#04d361',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#04d361',
+                    pointRadius: 6,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#a8a8b3', stepSize: 5 },
+                        grid: { color: '#29292e' }
+                    },
+                    x: {
+                        ticks: { color: '#a8a8b3' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

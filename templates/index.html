@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montar Treino - Danilo Gym</title>
+    <style>
+        /* DESIGN PREMIUM DARK MODE MESTRE */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #121214; 
+            color: #fff; 
+            max-width: 550px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            box-sizing: border-box;
+        }
+        .navbar-links { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 25px; 
+            justify-content: space-between;
+        }
+        .navbar-links div a { 
+            color: #04d361; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin-right: 15px;
+            font-size: 14px;
+        }
+        .navbar-links div a:hover { text-decoration: underline; }
+        
+        .card { 
+            background: #202024; 
+            padding: 35px; 
+            border-radius: 12px; 
+            border: 1px solid #29292e; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4); 
+        }
+        h2 { color: #04d361; margin-top: 0; margin-bottom: 10px; font-size: 24px; text-align: center; }
+        p.subtitle { color: #a8a8b3; text-align: center; font-size: 14px; margin-top: 0; margin-bottom: 30px; }
+        
+        label { display: block; margin: 20px 0 8px; color: #a8a8b3; font-weight: bold; font-size: 14px; }
+        select, input, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            background: #121214; 
+            color: #fff; 
+            border: 1px solid #29292e; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            font-family: inherit;
+        }
+        select:focus, input:focus, textarea:focus { border-color: #04d361; outline: none; }
+        
+        .alert-erro {
+            background-color: #f75a68;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .btn-submit { 
+            width: 100%; 
+            padding: 16px; 
+            background: #04d361; 
+            color: #000; 
+            font-weight: bold; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin-top: 25px; 
+            box-shadow: 0 4px 12px rgba(4, 211, 97, 0.25);
+            transition: all 0.2s;
+        }
+        .btn-submit:hover { background: #029e47; transform: translateY(-1px); }
+
+        /* ESTILOS DA TELA DE SUCESSO COMERCIAL */
+        .sucesso-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .sucesso-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .sucesso-box {
+            background: #121214;
+            border: 1px dashed #04d361;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            color: #e1e1e6;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar-links" id="nav-top-block">
+        <div>
+            <a href="/meus_treinos">🏋️ Meus Treinos</a>
+            <a href="/progresso">📊 Evolução IMC</a>
+        </div>
+        <a href="/logout" style="color: #f75a68; text-decoration: none; font-weight: bold; font-size: 14px;">Sair</a>
+    </div>
+
+    <div class="card" id="card-formulario">
+        <h2>🏋️ Planejamento de Nova Ficha</h2>
+        <p class="subtitle">Preencha o formulário para atualizar as suas diretrizes de treinamento.</p>
+
+        {% if erro_vinculo %}
+            <div class="alert-erro">{{ erro_vinculo }}</div>
+        {% endif %}
+
+        <form method="POST" id="form-ia" onsubmit="processarEnvioEID(event)">
+            
+            {% if aluno_sem_professor %}
+                <label>E-mail do seu Personal Trainer / Professor:</label>
+                <input type="email" name="novo_personal_email" placeholder="professor@academia.com" required>
+                <p style="color: #ff9000; font-size: 12px; margin-top: 5px; font-weight: bold;">⚠️ É obrigatório vincular um professor para que ele valide suas fichas.</p>
+            {% endif %}
+
+            <label>Qual o seu Objetivo Principal?</label>
+            <select name="objetivo" required>
+                <option value="Emagrecimento / Definição">Emagrecimento / Definição</option>
+                <option value="Hipertrofia / Ganho de Massa">Hipertrofia / Ganho de Massa</option>
+                <option value="Condicionamento Físico / Resistência">Condicionamento Físico / Resistência</option>
+                <option value="Força Bruta / Powerlifting">Força Bruta / Powerlifting</option>
+            </select>
+
+            <label>Qual o Foco Muscular Prioritário?</label>
+            <select name="foco" required>
+                <option value="Equilibrado (Sem foco específico)">Equilibrado (Sem foco específico)</option>
+                <option value="Membros Superiores (Peito, Costas, Braços)">Membros Superiores (Peito, Costas, Braços)</option>
+                <option value="Membros Inferiores (Pernas Completas, Glúteos)">Membros Inferiores (Pernas Completas, Glúteos)</option>
+                <option value="Core, Abdômen e Lombar">Core, Abdômen e Lombar</option>
+            </select>
+
+            <label>Frequência Semanal (Quantos dias vai treinar?)</label>
+            <select name="idade" required>
+                <option value="5">5 Dias (Fichas de Treino de A até E)</option>
+                <option value="4">4 Dias (Fichas de Treino de A até D)</option>
+                <option value="3">3 Dias (Fichas de Treino de A até C)</option>
+                <option value="2">2 Dias (Fichas de Treino de A e B)</option>
+                <option value="1">1 Dia (Ficha Única - Full Body)</option>
+            </select>
+
+            <label>Possui alguma limitação, dor ou problema de saúde?</label>
+            <textarea name="limitacoes" rows="3" placeholder="Ex: Dor no joelho esquerdo ao agachar, Hérnia de disco L4-L5... (Caso não tenha, deixe em branco)"></textarea>
+
+            <button type="submit" class="btn-submit" id="btn-gerar-ia">🏆 Solicitar Nova Ficha de Treino</button>
+        </form>
+    </div>
+
+    <div class="card hidden" id="card-sucesso">
+        <div class="sucesso-container">
+            <span class="sucesso-icon">🔔</span>
+            <h2>Treino Solicitado com Sucesso!</h2>
+            
+            <div class="sucesso-box">
+                O seu perfil e as informações de treino foram atualizados e enviados para o banco de dados. <strong>O seu Personal Trainer foi notificado no sistema e irá revisar, estruturar as séries e liberar a sua nova ficha de treinos em breve!</strong>
+            </div>
+
+            <a href="/meus_treinos" class="btn-submit" style="text-decoration: none; display: block; text-align: center;">🏋️ Ir para a Minha Área de Treino</a>
+        </div>
+    </div>
+
+    <script>
+        function processarEnvioEID(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btn-gerar-ia');
+            
+            // Botão de loading agora puramente sistêmico e corporativo
+            btn.disabled = true;
+            btn.style.background = '#29292e';
+            btn.style.color = '#a8a8b3';
+            btn.style.cursor = 'not-allowed';
+            btn.style.boxShadow = 'none';
+            btn.innerHTML = '⏳ Processando Dados e Enviando Anamnese...';
+
+            const formulario = document.getElementById('form-ia');
+            const dadosFormDados = new FormData(formulario);
+
+            fetch('/', {
+                method: 'POST',
+                body: dadosFormDados
+            })
+            .then(resposta => {
+                if (resposta.ok) {
+                    document.getElementById('card-formulario').classList.add('hidden');
+                    document.getElementById('nav-top-block').classList.add('hidden');
+                    document.getElementById('card-sucesso').classList.remove('hidden');
+                } else {
+                    alert("Erro ao processar o seu planejamento de treino. Tente novamente.");
+                    btn.disabled = false;
+                    btn.style.background = '#04d361';
+                    btn.style.color = '#000';
+                    btn.style.cursor = 'pointer';
+                    btn.innerHTML = '🏆 Solicitar Nova Ficha de Treino';
+                }
+            })
+            .catch(erro => {
+                console.error("Erro:", erro);
+                alert("Erro de conexão com o servidor da plataforma.");
+            });
+        }
+    </script>
+</body>
+</html>

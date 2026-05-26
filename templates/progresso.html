@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composição Corporal & Antropometria - AuraFit</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* DESIGN PREMIUM DARK MODE MESTRE - AURAFIT */
+        body { font-family: 'Segoe UI', sans-serif; background: #121214; color: #fff; max-width: 1050px; margin: 40px auto; padding: 20px; box-sizing: border-box; }
+        
+        .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .btn-voltar { display: inline-block; background: #29292e; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; border: 1px solid transparent; transition: all 0.2s; }
+        .btn-voltar:hover { background: transparent; color: #04d361; border-color: #04d361; }
+        
+        .card { background: #202024; padding: 30px; border-radius: 8px; border: 1px solid #29292e; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 25px; }
+        h2, h3 { color: #04d361; margin-top: 0; }
+        
+        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .secao-bloco { background: #121214; padding: 20px; border-radius: 6px; border: 1px solid #29292e; }
+        .secao-titulo { color: #04d361; font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #29292e; padding-bottom: 5px; }
+        
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        label { display: block; color: #a8a8b3; font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+        input { width: 100%; padding: 10px; background: #202024; color: #fff; border: 1px solid #29292e; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #04d361; outline: none; }
+        
+        .btn { width: 100%; padding: 14px; background: #04d361; color: #000; font-weight: bold; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(4, 211, 97, 0.2); transition: background 0.2s; }
+        .btn:hover { background: #029e47; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th, td { padding: 14px 10px; text-align: center; border-bottom: 1px solid #29292e; }
+        th { background: #121214; color: #04d361; }
+        tr:hover { background: #252529; }
+        .chart-container { position: relative; height: 340px; width: 100%; margin-top: 10px; background: #121214; padding: 15px; border-radius: 6px; border: 1px solid #29292e; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <div class="header-area">
+        <h2 style="margin:0;">📊 Composição Corporal & Antropometria</h2>
+        {% if session['usuario_tipo'] == 'aluno' %}
+            <a href="/meus_treinos" class="btn-voltar">⬅️ Meus Treinos</a>
+        {% else %}
+            <a href="/personal" class="btn-voltar">⬅️ Painel do Professor</a>
+        {% endif %}
+    </div>
+
+    {% if session['usuario_tipo'] != 'aluno' %}
+    <div class="card">
+        <p style="color: #a8a8b3; margin-top:-5px;">Aluno Avaliado: <strong>{{ aluno.nome }} {{ aluno.sobrenome }}</strong> ({{ aluno.email }})</p>
+        
+        <form method="POST">
+            <div class="grid-master">
+                <div class="secao-bloco">
+                    <div class="secao-titulo">📐 Perímetria Geral (cm)</div>
+                    <div class="grid-inputs">
+                        <div>
+                            <label>Peso Corporal (kg):</label>
+                            <input type="number" step="0.1" name="peso" required placeholder="Ex: 82.5">
+                        </div>
+                        <div>
+                            <label>Altura Corporal (m):</label>
+                            <input type="number" step="0.01" name="altura" required placeholder="Ex: 1.78">
+                        </div>
+                        <div>
+                            <label>Braço Esquerdo (cm):</label>
+                            <input type="number" step="0.1" name="braco_esq" placeholder="0.0">
+                        </div>
+                        <div>
+                            <label>Braço Direito (cm):</label>
+                            <input type="number" step="0.1" name="braco_dir" placeholder="0.0">
+                        </div>
+                        <div>
+                            <label>Cintura (cm):</label>
+                            <input type="number" step="0.1" name="cintura" placeholder="0.0">
+                        </div>
+                        <div>
+                            <label>Tórax (cm):</label>
+                            <input type="number" step="0.1" name="torax" placeholder="0.0">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label>Quadril (cm):</label>
+                            <input type="number" step="0.1" name="quadril" placeholder="0.0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="secao-bloco">
+                    <div class="secao-titulo">🔬 Pregas Cutâneas (mm)</div>
+                    <div class="grid-inputs">
+                        <div style="grid-column: span 2; margin-bottom: 5px;">
+                            <label style="color:#ff9000;">Idade Atual do Aluno nesta Avaliação (Anos):</label>
+                            <input type="number" name="idade_avaliacao" required min="1" max="120" placeholder="Ex: 27" style="border-color: rgba(255,144,0,0.4);">
+                        </div>
+                        
+                        <div>
+                            <label>Tórax (mm) - Masc:</label>
+                            <input type="number" step="0.1" name="dobra_torax" placeholder="0.0">
+                        </div>
+                        <div>
+                            <label>Abdômen (mm) - Masc:</label>
+                            <input type="number" step="0.1" name="dobra_abdomen" placeholder="0.0">
+                        </div>
+                        <div>
+                            <label>Tríceps (mm) - Fem:</label>
+                            <input type="number" step="0.1" name="dobra_triceps" placeholder="0.0">
+                        </div>
+                        <div>
+                            <label>Suprailíaca (mm) - Fem:</label>
+                            <input type="number" step="0.1" name="dobra_suprailiaca" placeholder="0.0">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label>Coxa (mm) - Ambos:</label>
+                            <input type="number" step="0.1" name="dobra_coxa" placeholder="0.0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn">💾 Salvar Laudo Técnico & Processar Métricas</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <h3>📈 Análise de Evolução Corporal Combinada</h3>
+        <p style="color: #a8a8b3; margin-top:-5px; font-size:14px;">Acompanhe o comportamento do seu IMC em paralelo com a taxa de Gordura Corporal (%G) obtida por antropometria.</p>
+        <div class="chart-container">
+            <canvas id="graficoEvolucaoCorporal"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📋 Histórico Completo das Avaliações Oficiais</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Peso Total</th>
+                        <th>Classificação IMC</th>
+                        <th style="color: #ff9000;">Gordura Corporal (%G)</th>
+                        <th style="color: #04d361;">Massa Magra Ativa</th>
+                        <th>Linha de Cintura</th>
+                        <th>Braços (D/E)</th>
+                        <th>Tronco (Tórax/Quadril)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in historico %}
+                    <tr>
+                        <td><strong>{{ r.data_registro }}</strong></td>
+                        <td>{{ r.peso }} kg<br><small style="color:#7c7c8a; font-weight:500;">Alt: {{ r.altura }}m</small></td>
+                        <td><strong>{{ r.imc }}</strong><br><small style="color:#a8a8b3;">{{ r.status_imc.split(' ')[0] }}</small></td>
+                        <td style="color: #ff9000; font-weight: bold; font-size:14px;">{{ r.percentual_gordura }} %</td>
+                        <td style="color: #04d361; font-weight: bold; font-size:14px;">{{ r.massa_magra }} kg</td>
+                        <td>{{ r.cintura or '-' }} cm</td>
+                        <td>{{ r.braco_dir or '-' }} / {{ r.braco_esq or '-' }} cm</td>
+                        <td>{{ r.torax or '-' }} / {{ r.quadril or '-' }} cm</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not historico %}
+                    <tr>
+                        <td colspan="8" style="color:#a8a8b3; font-style:italic; padding:30px;">Nenhum laudo clínico de bioimpedância ou dobras registrado para este perfil ainda.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const datas = [{% for r in historico|reverse %}"{{ r.data_registro }}",{% endfor %}];
+            const imcs = [{% for r in historico|reverse %}{{ r.imc }},{% endfor %}];
+            const gordura = [{% for r in historico|reverse %}{{ r.percentual_gordura }},{% endfor %}];
+
+            const ctx = document.getElementById('graficoEvolucaoCorporal').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: datas,
+                    datasets: [
+                        {
+                            label: 'Evolução do IMC',
+                            data: imcs,
+                            borderColor: '#04d361',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            tension: 0.25,
+                            pointRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Percentual de Gordura (%G)',
+                            data: gordura,
+                            borderColor: '#ff9000',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            tension: 0.25,
+                            pointRadius: 4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', grid: { color: '#29292e' }, ticks: { color: '#04d361', font: { weight: 'bold' } } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#ff9000', font: { weight: 'bold' } } },
+                        x: { ticks: { color: '#a8a8b3' }, grid: { display: false } }
+                    },
+                    plugins: { legend: { labels: { color: '#fff', font: { weight: 'bold', size: 12 } } } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

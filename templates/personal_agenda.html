@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda Interativa com Sistema de Presença</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/pt-br.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121214; color: #fff; max-width: 900px; margin: 40px auto; padding: 20px; }
+        h1, h2 { color: #04d361; text-align: center; }
+        .layout-agenda { display: flex; gap: 20px; flex-wrap: wrap; }
+        .col-calendario { flex: 1.2; min-width: 350px; background: #202024; padding: 20px; border-radius: 8px; }
+        .col-lista { flex: 1.3; min-width: 350px; background: #202024; padding: 20px; border-radius: 8px; }
+        
+        #calendario { background: #121214; padding: 10px; border-radius: 6px; border: 1px solid #29292e; }
+        .fc .fc-toolbar-title { color: #04d361; font-size: 18px; }
+        .fc .fc-button-primary { background-color: #29292e; border-color: #323238; color: #fff; }
+        .fc .fc-button-primary:hover { background-color: #04d361; color: #000; }
+        .fc-daygrid-day { cursor: pointer; }
+        .fc-daygrid-day:hover { background: #1c1c1e; }
+
+        .modal-criacao { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #202024; padding: 25px; border-radius: 8px; border: 2px solid #04d361; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000; width: 90%; max-width: 350px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; }
+        
+        input { width: 100%; padding: 12px; background: #121214; border: 1px solid #29292e; border-radius: 4px; color: #fff; box-sizing: border-box; margin-top: 5px; margin-bottom: 15px; }
+        .btn-add { width: 100%; padding: 12px; background: #04d361; border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer; }
+        .btn-cancel { width: 100%; padding: 10px; background: #29292e; border: 1px solid #323238; border-radius: 4px; color: #a8a8b3; margin-top: 8px; cursor: pointer; }
+        
+        .grade-horario { background: #1a1a1e; padding: 15px; border-radius: 6px; border-left: 4px solid #ff9000; margin-bottom: 15px; }
+        .btn-del { color: #f75a68; text-decoration: none; font-size: 12px; border: 1px solid #f75a68; padding: 3px 6px; border-radius: 4px; float: right; }
+        
+        /* Estilos dos botões de Chamada */
+        .aluno-row { background: #121214; padding: 10px; border-radius: 4px; margin-top: 8px; border: 1px solid #29292e; }
+        .btn-presenca { background: #04d361; color: #000; font-weight: bold; padding: 4px 8px; font-size: 11px; text-decoration: none; border-radius: 3px; margin-right: 5px; }
+        .btn-falta { background: #f75a68; color: #fff; font-weight: bold; padding: 4px 8px; font-size: 11px; text-decoration: none; border-radius: 3px; margin-right: 5px; }
+        .btn-reset-chamada { background: #29292e; color: #a8a8b3; padding: 4px 8px; font-size: 11px; text-decoration: none; border-radius: 3px; }
+        .badge { font-size: 11px; font-weight: bold; padding: 3px 6px; border-radius: 3px; display: inline-block; margin-top: 5px; }
+        .badge-p { background: rgba(4, 211, 97, 0.2); color: #04d361; }
+        .badge-f { background: rgba(247, 90, 104, 0.2); color: #f75a68; }
+    </style>
+</head>
+<body>
+
+    <h1>📅 Agenda & Controle de Frequência</h1>
+
+    <div class="layout-agenda">
+        <div class="col-calendario">
+            <h2 style="text-align: left; font-size: 17px; margin-top: 0; color: #a8a8b3;">Toque em um dia para abrir vagas:</h2>
+            <div id="calendario"></div>
+        </div>
+
+        <div class="col-lista">
+            <h2 style="text-align: left; font-size: 17px; margin-top: 0; color: #04d361;">📋 Próximas Aulas & Lista de Presença</h2>
+            {% for item in agenda %}
+                <div class="grade-horario">
+                    <a href="/personal/agenda/deletar/{{ item.info.id }}" class="btn-del" onclick="return confirm('Excluir horário e todas as reservas dele?')">Excluir Grade</a>
+                    <strong>🗓️ {{ item.info.data }} - 🕒 {{ item.info.horario }}</strong><br>
+                    <span style="color: #a8a8b3; font-size: 12px;">Ocupação: {{ item.info.vagas_ocupadas }} / {{ item.info.vagas_totais }}</span>
+                    
+                    {% if item.alunos %}
+                        <div style="margin-top: 10px;">
+                            {% for al in item.alunos %}
+                                <div class="aluno-row">
+                                    <span style="font-weight: bold; font-size: 13px;">👤 {{ al.nome }} {{ al.sobrenome }}</span><br>
+                                    
+                                    {% if al.status == 'Pendente' %}
+                                        <div style="margin-top: 5px;">
+                                            <a href="/personal/agenda/chamada/{{ al.checkin_id }}/Presença" class="btn-presenca">🟢 Confirmou Presença</a>
+                                            <a href="/personal/agenda/chamada/{{ al.checkin_id }}/Falta" class="btn-falta">🔴 Marcar Falta</a>
+                                        </div>
+                                    {% elif al.status == 'Presença' %}
+                                        <span class="badge badge-get badge-p">✅ Presença Confirmada</span>
+                                        <a href="/personal/agenda/chamada/{{ al.checkin_id }}/Pendente" class="btn-reset-chamada" style="font-size:10px; margin-left:10px;">Desfazer</a>
+                                    {% else %}
+                                        <span class="badge badge-get badge-f">❌ Falta Registrada</span>
+                                        <a href="/personal/agenda/chamada/{{ al.checkin_id }}/Pendente" class="btn-reset-chamada" style="font-size:10px; margin-left:10px;">Desfazer</a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p style="text-align: center; color: #7c7c8a; font-style: italic;">Nenhum horário aberto.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="overlayModal" onclick="fecharModal()"></div>
+    <div class="modal-criacao" id="formModal">
+        <h3 style="margin-top: 0; color: #04d361; text-align: center;">➕ Abrir Horário</h3>
+        <form method="POST">
+            <label>Data:</label>
+            <input type="text" id="dataExibicao" readonly style="background: #1c1c1e; color: #7c7c8a;">
+            <input type="hidden" id="dataReal" name="data">
+            
+            <label>Horário:</label>
+            <input type="time" name="horario" required value="08:00">
+            
+            <label>Capacidade (Vagas):</label>
+            <input type="number" name="vagas" value="1" min="1" required>
+            
+            <button type="submit" class="btn-add">Confirmar e Liberar</button>
+            <button type="button" class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+        </form>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/personal" style="color: #a8a8b3; text-decoration: none; font-weight: bold;">⬅ Voltar ao Painel Principal</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendario');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'pt-br',
+                initialView: 'dayGridMonth',
+                headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+                selectable: true,
+                dateClick: function(info) { abrirModal(info.dateStr); }
+            });
+            calendar.render();
+        });
+
+        function abrirModal(dataISO) {
+            var partes = dataISO.split("-");
+            document.getElementById("dataExibicao").value = partes[2] + "/" + partes[1] + "/" + partes[0];
+            document.getElementById("dataReal").value = dataISO;
+            document.getElementById("overlayModal").style.display = "block";
+            document.getElementById("formModal").style.display = "block";
+        }
+
+        function fecharModal() {
+            document.getElementById("overlayModal").style.display = "none";
+            document.getElementById("formModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>

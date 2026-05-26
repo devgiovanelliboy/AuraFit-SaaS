@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Treinos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121214;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #202024;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #29292e;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #04d361;
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a8a8b3;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: #121214;
+            color: #ffffff;
+            border: 1px solid #29292e;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        input:focus, select:focus {
+            border-color: #04d361;
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #04d361;
+            color: #000000;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #029e47;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .alert-erro {
+            background-color: #f75a68;
+            color: #ffffff;
+        }
+        .alert-sucesso {
+            background-color: #04d361;
+            color: #000000;
+        }
+        .toggle-form {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #a8a8b3;
+        }
+        .toggle-form a {
+            color: #04d361;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div id="section-login">
+            <h2>💪 Entrar no Sistema</h2>
+            
+            {% if erro %}
+                <div class="alert alert-erro">{{ erro }}</div>
+            {% endif %}
+            {% if sucesso %}
+                <div class="alert alert-sucesso">{{ sucesso }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <input type="hidden" name="acao" value="login">
+                
+                <label>E-mail:</label>
+                <input type="email" name="email" placeholder="Seu e-mail cadastrado" required>
+
+                <label>Senha:</label>
+                <input type="password" name="senha" placeholder="Sua senha secreta" required>
+
+                <button type="submit" class="btn">🚀 Acessar Painel</button>
+            </form>
+            
+            <div class="toggle-form">
+                Não tem uma conta? <a href="#" onclick="alternarFormularios()">Cadastre-se aqui</a>
+            </div>
+        </div>
+
+        <div id="section-cadastro" class="hidden">
+            <h2>📝 Criar Nova Conta</h2>
+            <form method="POST">
+                <input type="hidden" name="acao" value="cadastrar">
+                
+                <label>Nome:</label>
+                <input type="text" name="nome" placeholder="Ex: Danilo" required>
+
+                <label>Sobrenome:</label>
+                <input type="text" name="sobrenome" placeholder="Ex: Gioanelli" required>
+
+                <label>E-mail:</label>
+                <input type="email" name="email" placeholder="Ex: seuemail@gmail.com" required>
+
+                <label>Senha:</label>
+                <input type="password" name="senha" placeholder="Crie uma senha" required>
+
+                <label>CPF:</label>
+                <input type="text" name="cpf" placeholder="000.000.000-00" required>
+
+                <label>Telefone:</label>
+                <input type="text" name="telefone" placeholder="(11) 99999-9999" required>
+
+                <label>Você é:</label>
+                <select name="tipo" id="tipo_usuario" onchange="mostrarCampoPersonal()" required>
+                    <option value="aluno">Aluno da Academia</option>
+                    <option value="personal">Professor / Personal Trainer</option>
+                </select>
+
+                <div id="div_personal_vinculado">
+                    <label>E-mail do seu Personal Trainer:</label>
+                    <input type="email" name="personal_vinculado" placeholder="professor@academia.com">
+                </div>
+
+                <button type="submit" class="btn">💾 Finalizar Cadastro</button>
+            </form>
+            
+            <div class="toggle-form">
+                Já possui uma conta? <a href="#" onclick="alternarFormularios()">Faça login aqui</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function alternarFormularios() {
+            document.getElementById('section-login').classList.toggle('hidden');
+            document.getElementById('section-cadastro').classList.toggle('hidden');
+        }
+
+        function mostrarCampoPersonal() {
+            const tipo = document.getElementById('tipo_usuario').value;
+            const divPersonal = document.getElementById('div_personal_vinculado');
+            if (tipo === 'personal') {
+                divPersonal.classList.add('hidden');
+            } else {
+                divPersonal.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

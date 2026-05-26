@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"><title>Check-in de Aulas</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121214; color: #fff; max-width: 600px; margin: 40px auto; padding: 20px; }
+        h1, h2 { color: #ff9000; text-align: center; }
+        .box { background: #202024; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .item-aula { background: #1a1a1e; padding: 15px; border-radius: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #ff9000; }
+        .btn-checkin { background: #ff9000; color: #000; padding: 8px 16px; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-cancelar { background: #29292e; color: #f75a68; padding: 8px 16px; text-decoration: none; font-weight: bold; border-radius: 4px; border: 1px solid #f75a68; }
+        .btn-bloqueado { background: #1c1c1e; color: #7c7c8a; padding: 8px 16px; border: 1px solid #29292e; border-radius: 4px; font-size: 13px; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1 style="color: #04d361;">🗓️ Reserva de Aulas Presenciais</h1>
+
+    <div class="box">
+        <h2>📋 Meus Check-ins Confirmados</h2>
+        {% for ag in meus_agendamentos %}
+            <div class="item-aula" style="border-left-color: #04d361;">
+                <div>
+                    <strong>📅 {{ ag.data }} - 🕒 Horário: {{ ag.horario }}</strong><br>
+                    <span style="color: #a8a8b3; font-size: 13px;">Professor: {{ ag.prof_nome }}</span>
+                </div>
+                {% if ag.pode_desmarcar %}
+                    <a href="/aluno/agenda/desmarcar/{{ ag.checkin_id }}" class="btn-cancelar" onclick="return confirm('Deseja cancelar seu check-in?')">Desmarcar</a>
+                {% else %}
+                    <span class="btn-bloqueado" title="Trava de Segurança: Faltam menos de 2h para o início do treino.">🔒 Cancelamento Retido</span>
+                {% endif %}
+            </div>
+        {% else %}
+            <p style="text-align: center; color: #7c7c8a; font-style: italic;">Você não tem nenhuma reserva agendada.</p>
+        {% endfor %}
+    </div>
+
+    <div class="box">
+        <h2>⚡ Horários Disponíveis para Check-in</h2>
+        {% for livre in disponiveis %}
+            <div class="item-aula">
+                <div>
+                    <strong>🗓️ {{ livre.data }} - 🕒 {{ livre.horario }}</strong><br>
+                    <span style="color: #a8a8b3; font-size:13px;">Restam {{ livre.vagas_restantes }} vagas neste horário</span>
+                </div>
+                <form method="POST">
+                    <input type="hidden" name="acao" value="agendar">
+                    <input type="hidden" name="id_agenda" value="{{ livre.id }}">
+                    <button type="submit" class="btn-checkin">Fazer Check-in</button>
+                </form>
+            </div>
+        {% else %}
+            <p style="text-align: center; color: #7c7c8a; font-style: italic;">Seu Personal não abriu horários vagos para os próximos dias.</p>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center;"><a href="/meus_treinos" style="color: #a8a8b3; text-decoration: none; font-weight: bold;">⬅ Voltar aos Meus Treinos</a></div>
+</body>
+</html>

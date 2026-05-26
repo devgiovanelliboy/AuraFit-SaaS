@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Treino - Danilo Gym</title>
+    <style>
+        /* DESIGN PREMIUM DARK MODE MESTRE */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #121214; 
+            color: #fff; 
+            max-width: 650px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            box-sizing: border-box;
+        }
+        .card { 
+            background: #202024; 
+            padding: 30px; 
+            border-radius: 8px; 
+            border: 1px solid #29292e; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+        }
+        
+        /* CABEÇALHO COM BOTÃO VOLTAR ALINHADO */
+        .card-header-block {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h2 { color: #04d361; margin: 0; font-size: 24px; }
+        
+        .btn-voltar {
+            background: #29292e;
+            color: #a8a8b3;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .btn-voltar:hover {
+            background: transparent;
+            color: #04d361;
+            border-color: #04d361;
+        }
+        
+        /* BOTÕES DE ABAS REATIVOS */
+        .tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .tab-btn { 
+            background: #29292e; 
+            border: 1px solid transparent; 
+            color: #a8a8b3; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            transition: all 0.2s;
+        }
+        .tab-btn.active { 
+            background: rgba(4, 211, 97, 0.15); 
+            color: #04d361; 
+            border-color: #04d361;
+        }
+
+        /* TABELA E LINHAS DE EXERCÍCIO */
+        .exercicios-lista {
+            background: #121214;
+            border-radius: 6px;
+            border: 1px solid #29292e;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        .linha-exercicio {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #29292e;
+            gap: 15px;
+        }
+        .linha-exercicio:last-child {
+            border-bottom: none;
+        }
+        .exercicio-nome {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #ffffff;
+        }
+        
+        /* CAMPO DE INPUT DE PESO SLIM */
+        .wrapper-carga {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #202024;
+            border: 1px solid #29292e;
+            border-radius: 4px;
+            padding: 6px 10px;
+        }
+        .wrapper-carga input {
+            width: 60px;
+            background: transparent;
+            border: none;
+            color: #04d361;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: right;
+            padding: 0;
+        }
+        .wrapper-carga input:focus {
+            outline: none;
+        }
+        .wrapper-carga span {
+            color: #7c7c8a;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        label { display: block; margin: 20px 0 8px; color: #a8a8b3; font-weight: bold; font-size: 14px; }
+        .input-obs { 
+            width: 100%; 
+            padding: 12px; 
+            background: #121214; 
+            color: #fff; 
+            border: 1px solid #29292e; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            resize: vertical;
+            font-family: inherit;
+        }
+        .input-obs:focus { border-color: #04d361; outline: none; }
+
+        .btn-submit { 
+            width: 100%; 
+            padding: 15px; 
+            background: #04d361; 
+            color: #000; 
+            font-weight: bold; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            box-shadow: 0 4px 12px rgba(4, 211, 97, 0.2);
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background: #029e47; }
+        
+        .bloco-treino { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-header-block">
+            <div class="title-area">
+                <h2>💪 Executar Meu Treino Diário</h2>
+            </div>
+            <a href="/meus_treinos" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <div class="tabs-container">
+            {% for letra, conteudo in treinos.items() %}
+                {% if conteudo %}
+                    <button type="button" class="tab-btn {% if loop.first %}active{% endif %}" id="btn-{{ letra }}" onclick="mostrarTreino('{{ letra }}')">TREINO {{ letra }}</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <form method="POST" id="form-treino">
+            <input type="hidden" name="tipo_treino" id="input-tipo-treino" value="">
+            
+            <input type="hidden" name="cargas" id="cargas-final-input">
+
+            {% for letra, conteudo in treinos.items() %}
+                {% if conteudo %}
+                    <div id="treino-{{ letra }}" class="bloco-treino">
+                        <div class="exercicios-lista" id="lista-{{ letra }}">
+                            </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <label>Anotações gerais / Observações do treino:</label>
+            <textarea class="input-obs" id="obs-geral" rows="3" placeholder="Ex: Senti o treino render muito. Aumentei carga no supino."></textarea>
+
+            <button type="submit" class="btn-submit" onclick="compilarDadosAntesDeEnviar(event)">🏁 Concluir e Salvar Treino</button>
+        </form>
+    </div>
+
+    <script>
+        // Armazenamos de forma segura os treinos criados pela IA
+        const treinosDadosBrutos = {
+            {% for letra, conteudo in treinos.items() %}
+                "{{ letra }}": `{{ conteudo|safe }}`,
+            {% endfor %}
+        };
+
+        // Função que varre o texto, acha as linhas e cria os campos de quilos
+        function quebrarTextoEmLinhasDeCarga() {
+            Object.keys(treinosDadosBrutos).forEach(letra => {
+                const textoCompleto = treinosDadosBrutos[letra].trim();
+                const containerLista = document.getElementById("lista-" + letra);
+                if (!containerLista) return;
+
+                // Divide o textão por quebra de linha
+                const linhasBrutas = textoCompleto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                
+                let htmlResultado = "";
+                let indexExercicio = 1;
+
+                linhasBrutas.forEach(linha => {
+                    if (linha.includes("MARCADOR_TREINO")) return;
+
+                    const textoLimpoExercicio = linha.replace(/^\d+[\.\-\s]*/, '');
+
+                    htmlResultado += `
+                        <div class="linha-exercicio">
+                            <span class="exercicio-nome"><strong>${indexExercicio}.</strong> ${textoLimpoExercicio}</span>
+                            <div class="wrapper-carga">
+                                <input type="number" class="input-carga-ex" data-nome="${textoLimpoExercicio}" placeholder="0" min="0">
+                                <span>kg</span>
+                            </div>
+                        </div>
+                    `;
+                    indexExercicio++;
+                });
+
+                containerLista.innerHTML = htmlResultado;
+            });
+
+            // Ativa o primeiro painel visível na inicialização
+            const abaAtiva = document.querySelector('.tab-btn.active');
+            if (abaAtiva) {
+                const letraInicial = abaAtiva.id.replace('btn-', '');
+                document.getElementById('treino-' + letraInicial).style.display = 'block';
+                document.getElementById('input-tipo-treino').value = 'TREINO ' + letraInicial;
+            }
+        }
+
+        function mostrarTreino(letra) {
+            document.querySelectorAll('.bloco-treino').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('treino-' + letra).style.display = 'block';
+            document.getElementById('btn-' + letra).classList.add('active');
+            document.getElementById('input-tipo-treino').value = 'TREINO ' + letra;
+        }
+
+        // Junta os pesos digitados em cada caixa antes de enviar para o banco de dados
+        function compilarDadosAntesDeEnviar(event) {
+            event.preventDefault();
+            
+            const letraAtiva = document.querySelector('.tab-btn.active').id.replace('btn-', '');
+            const painelAtivo = document.getElementById('treino-' + letraAtiva);
+            const inputsDeCarga = painelAtivo.querySelectorAll('.input-carga-ex');
+            
+            let arrayCargasCompiladas = [];
+            
+            inputsDeCarga.forEach(input => {
+                const pesoInformado = input.value.trim();
+                if (pesoInformado && pesoInformado !== "0") {
+                    arrayCargasCompiladas.push(`${input.getAttribute('data-nome')} -> Carga: ${pesoInformado}kg`);
+                }
+            });
+
+            const obsTexto = document.getElementById('obs-geral').value.trim();
+            if (obsTexto) {
+                arrayCargasCompiladas.push(`[Nota: ${obsTexto}]`);
+            }
+
+            if (arrayCargasCompiladas.length === 0) {
+                document.getElementById('cargas-final-input').value = "Treino finalizado (Carga padrão mantida).";
+            } else {
+                document.getElementById('cargas-final-input').value = arrayCargasCompiladas.join(' | ');
+            }
+
+            document.getElementById('form-treino').submit();
+        }
+
+        document.addEventListener("DOMContentLoaded", quebrarTextoEmLinhasDeCarga);
+    </script>
+</body>
+</html>

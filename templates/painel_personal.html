@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Professor - AuraFit</title>
+    <style>
+        /* DESIGN PREMIUM DARK MODE MESTRE */
+        body { font-family: 'Segoe UI', sans-serif; background: #121214; color: #fff; max-width: 1200px; margin: 40px auto; padding: 20px; box-sizing: border-box; }
+        .navbar-links { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #202024; padding: 15px 20px; border-radius: 8px; border: 1px solid #29292e; }
+        .brand-logo { color: #04d361; font-weight: bold; font-size: 22px; text-decoration: none; letter-spacing: 1px; }
+        
+        .card { background: #202024; padding: 30px; border-radius: 8px; border: 1px solid #29292e; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 25px; }
+        h3 { color: #04d361; margin-top: 0; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #29292e; vertical-align: middle; }
+        th { background: #121214; color: #04d361; font-weight: bold; }
+        tr:hover { background: #252529; }
+
+        .btn { display: inline-block; padding: 8px 14px; border-radius: 4px; font-weight: bold; font-size: 13px; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s; text-align: center; }
+        .btn-green { background: #04d361; color: #000; }
+        .btn-green:hover { background: #029e47; }
+        .btn-blue { background: #0072f5; color: #fff; }
+        .btn-blue:hover { background: #0052b3; }
+        .btn-dark { background: #29292e; color: #a8a8b3; border: 1px solid #3e3e44; }
+        .btn-dark:hover { color: #fff; border-color: #04d361; }
+        .btn-red { background: transparent; color: #f75a68; }
+        .btn-red:hover { text-decoration: underline; }
+
+        .condicao-clinica { background: rgba(247, 90, 104, 0.1); border-left: 3px solid #f75a68; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #f75a68; font-weight: bold; max-width: 220px; }
+        .condicao-limpa { background: rgba(4, 211, 97, 0.1); border-left: 3px solid #04d361; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #04d361; font-weight: bold; max-width: 220px; }
+        
+        .form-nivel { display: flex; flex-direction: column; gap: 6px; background: #121214; padding: 10px; border-radius: 6px; border: 1px solid #29292e; max-width: 180px; }
+        .form-nivel select { background: #202024; color: #fff; border: 1px solid #29292e; padding: 5px; border-radius: 4px; font-size: 12px; }
+
+        /* MODAL FLUTUANTE DE VISUALIZAÇÃO */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #202024; padding: 30px; border-radius: 12px; border: 1px solid #29292e; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #29292e; padding-bottom: 10px; }
+        .close-modal { color: #a8a8b3; font-size: 28px; cursor: pointer; font-weight: bold; }
+        .close-modal:hover { color: #f75a68; }
+        .treino-preview-text { background: #121214; padding: 20px; border-radius: 6px; border: 1px solid #29292e; white-space: pre-wrap; line-height: 1.6; font-size: 14px; color: #e1e1e6; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar-links">
+        <a href="/personal" class="brand-logo">🚀 AURAFIT PROFESSOR</a>
+        <div style="display: flex; gap: 10px;">
+            <a href="/personal/agenda" class="btn btn-blue">📅 Gerenciar Minha Agenda</a>
+            <a href="/logout" class="btn btn-red">Sair</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🔔 Novas Fichas Aguardando Análise Técnica</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>Objetivo</th>
+                    <th>Foco Prioritário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pendentes %}
+                <tr>
+                    <td><strong>{{ p.nome }} {{ p.sobrenome }}</strong><br><span style="color:#7c7c8a; font-size:12px;">{{ p.usuario_email }}</span></td>
+                    <td>{{ p.objetivo }}</td>
+                    <td><span style="color: #04d361; font-weight: bold;">{{ p.foco }}</span></td>
+                    <td>
+                        <a href="/personal/revisar/{{ p.id }}" class="btn btn-green">🔍 Ajustar & Ativar Ficha</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not pendentes %}
+                <tr>
+                    <td colspan="4" style="color: #a8a8b3; font-style: italic; text-align: center; padding: 20px;">Nenhuma solicitação de ficha pendente.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>👥 Meus Alunos Ativos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ficha Técnica / Aluno</th>
+                    <th>Restrições & Saúde (Salvo)</th>
+                    <th>Ficha Atual</th>
+                    <th>Controle Corporal</th>
+                    <th>Evolução Prática</th>
+                    <th>Renovar / Alterar Nível</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                <tr>
+                    <td>
+                        <strong>{{ aluno.nome }} {{ aluno.sobrenome }}</strong><br>
+                        <span style="color:#a8a8b3; font-size:12px;">Vence em: <strong>{{ aluno.data_validade or 'Sem ficha ativa' }}</strong></span>
+                    </td>
+                    <td>
+                        {% if aluno.limitacoes and aluno.limitacoes.strip() != "" and aluno.limitacoes.strip() != "Nenhuma" %}
+                            <div class="condicao-clinica">⚠️ Restrição: {{ aluno.limitacoes }}</div>
+                        {% else %}
+                            <div class="condicao-limpa">✅ Sem restrições médicas</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-dark" onclick="abrirModalFicha('{{ aluno.email }}', '{{ aluno.nome }}')">📄 Ver Ficha Atual</button>
+                    </td>
+                    <td>
+                        <a href="/progresso/{{ aluno.email }}" class="btn btn-dark">⚖️ Avaliação Física</a>
+                    </td>
+                    <td>
+                        <a href="/compartilhado/ver_treino/{{ aluno.email }}" class="btn btn-green">📊 Evolução de Carga</a>
+                    </td>
+                    <td>
+                        <form action="/personal/criar_treino_manual/{{ aluno.email }}" method="POST" class="form-nivel">
+                            <input type="hidden" name="objetivo" value="{{ aluno.objetivo or 'Hipertrofia / Ganho de Massa' }}">
+                            <input type="hidden" name="foco" value="{{ aluno.foco or 'Equilibrado (Sem foco específico)' }}">
+                            
+                            <select name="nivel">
+                                <option value="Iniciante">Iniciante</option>
+                                <option value="Intermediário" selected>Intermediário</option>
+                                <option value="Avançado">Avançado</option>
+                                <option value="Experiente">Experiente</option>
+                            </select>
+                            <button type="submit" class="btn btn-blue" style="padding: 4px; font-size: 11px;">⚡ Atualizar Treino</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="/compartilhado/desvincular/{{ aluno.email }}" class="btn btn-red" onclick="return confirm('Deseja desvincular?')">Desvincular</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not alunos %}
+                <tr>
+                    <td colspan="7" style="color: #a8a8b3; font-style: italic; text-align: center; padding: 20px;">Nenhum aluno ativo.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="modalFicha" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTituloFicha" style="margin:0; color:#04d361;">Planilha de Exercícios Atual</h3>
+                <span class="close-modal" onclick="fecharModalFicha()">&times;</span>
+            </div>
+            <div class="treino-preview-text" id="modalTextoFicha">Carregando dados...</div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalFicha(email, nome) {
+            document.getElementById('modalTituloFicha').innerText = `📄 Ficha Ativa: ${nome}`;
+            document.getElementById('modalTextoFicha').innerText = "Buscando planejamento no banco de dados...";
+            document.getElementById('modalFicha').style.display = 'flex';
+
+            // Requisição silenciosa para pegar o texto puro da ficha ativa do aluno
+            fetch(`/personal/api/ver_ficha/${email}`)
+                .then(res => res.json())
+                .then(dados => {
+                    if (dados.treino) {
+                        document.getElementById('modalTextoFicha').innerText = dados.treino;
+                    } else {
+                        document.getElementById('modalTextoFicha').innerText = "Este aluno não possui nenhuma ficha de exercícios ativa no momento.";
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('modalTextoFicha').innerText = "Erro ao conectar com o banco de dados.";
+                });
+        }
+
+        function fecharModalFicha() {
+            document.getElementById('modalFicha').style.display = 'none';
+        }
+
+        // Fecha o modal caso o usuário clique fora da caixa cinza
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalFicha');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

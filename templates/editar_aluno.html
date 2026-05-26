@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Alterar Dados do Aluno</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #121214; color: #fff; max-width: 400px; margin: 60px auto; padding: 20px; }
+        h1 { color: #04d361; text-align: center; }
+        .box { background: #202024; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        input { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 15px; background: #121214; border: 1px solid #29292e; border-radius: 4px; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #04d361; border: none; border-radius: 4px; color: #000; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .erro { background: #f75a68; color: #fff; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 15px; }
+        .voltar { text-align: center; display: block; margin-top: 15px; color: #a8a8b3; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <h1>📝 Alterar Login do Aluno</h1>
+
+    {% if erro %}<div class="erro">{{ erro }}</div>{% endif %}
+
+    <div class="box">
+        <p style="color: #a8a8b3; font-size: 14px; margin-top: 0;">Você está alterando as credenciais de acesso de:</p>
+        <h3 style="margin-top: -10px; color: #04d361;">{{ aluno.email }}</h3>
+        
+        <form method="POST">
+            <label>E-mail de Acesso:</label>
+            <input type="email" name="email" value="{{ aluno.email }}" required>
+            
+            <label>Nova Senha do Aluno:</label>
+            <input type="text" name="senha" value="{{ aluno.senha }}" required placeholder="Digite a nova senha">
+            
+            <button type="submit">💾 Salvar Alterações</button>
+        </form>
+        
+        <a href="/personal" class="voltar">Cancelar e Voltar</a>
+    </div>
+
+</body>
+</html>
